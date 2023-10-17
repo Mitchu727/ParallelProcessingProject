@@ -24,7 +24,17 @@ float calculateSquareSumOfValuesInVector(vector<float> x) {
 }
 
 void printVector (const vector<float>& vec) {
-  for (size_t i = 0; i < vec.size(); i++) {
-    cout << vec[i] << " ";
-  }
+  cout << vectorToString(vec);
+}
+
+string vectorToString(const vector<float>& vec) {
+  string begin("[");
+  string end("]");
+  std::string body = accumulate(++vec.begin(), vec.end(), std::string(to_string(vec[0])), 
+    [](const string &a, float b) -> string {
+      return a + ", " + to_string(b);
+    }
+  );
+
+  return begin + body + end;
 }
