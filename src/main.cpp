@@ -3,13 +3,14 @@
 #include "firstFunction.h"
 #include "secondFunction.h"
 #include "vectorUtils.h"
+#include "randomSearch.h"
 
 using namespace std;
 
 int main(int argc, char* argv[]) 
 { 
     cout << "Hello world" <<endl;
-    vector<float> vect = generateRandomVectorFromUniformDistribution(2, 0.,0.);
+    vector<float> vect = generateRandomVectorFromUniformDistribution(2, -10., 10.);
     cout << "Wielkość wektora: " << vect.size() <<endl; 
     cout << "Wektor:" << endl;
     printVector(vect);
@@ -18,4 +19,8 @@ int main(int argc, char* argv[])
     cout << endl;
     // std::vector<int> randomVector = generateRandomVector(10);
     // printVector(randomVector);
+
+    cout << "Losowe szukanie: ";
+    auto res = calculateRandomSearch(calculateFirstFunctionValueForVector, 3);
+    res.print();
 } 

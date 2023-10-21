@@ -17,7 +17,7 @@ make build
 and then run it with:
 
 ```
-./main
+../build/main
 ```
 
 You can also do both using:
