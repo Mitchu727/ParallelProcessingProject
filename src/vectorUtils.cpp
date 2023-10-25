@@ -23,7 +23,7 @@ float calculateSquareSumOfValuesInVector(vector<float> x) {
   return inner_product( x.begin(), x.end(), x.begin(), 0 );
 }
 
-float calculateNeighborhoodBetweenTwoVectors(vector<float> x, vector<float> y) { 
+float calculateDistanceBetweenVectors(vector<float> x, vector<float> y) { 
   return sqrt(calculateSquareSumOfValuesInVector(subtractVectors(x, y)));
 }
 
