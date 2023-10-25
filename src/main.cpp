@@ -21,6 +21,6 @@ int main(int argc, char* argv[])
     // printVector(randomVector);
 
     cout << "Losowe szukanie: ";
-    auto res = calculateRandomSearch(calculateFirstFunctionValueForVector, 3);
+    result res = calculateRandomSearch(calculateFirstFunctionValueForVector, 3);
     res.print();
 } 

@@ -20,7 +20,17 @@ vector<float> generateRandomVectorFromUniformDistribution(int size, float minVal
 }
 
 float calculateSquareSumOfValuesInVector(vector<float> x) {
-  return std::inner_product( x.begin(), x.end(), x.begin(), 0 );
+  return inner_product( x.begin(), x.end(), x.begin(), 0 );
+}
+
+float calculateNeighborhoodBetweenTwoVectors(vector<float> x, vector<float> y) { 
+  return sqrt(calculateSquareSumOfValuesInVector(subtractVectors(x, y)));
+}
+
+vector<float> subtractVectors(vector<float> x, vector<float> y) {
+    vector<float> result;
+    transform(x.begin(),x.end(),y.begin(), std::back_inserter(result), std::minus<float>());
+    return result;
 }
 
 void printVector (const vector<float>& vec) {
@@ -38,3 +48,5 @@ string vectorToString(const vector<float>& vec) {
 
   return begin + body + end;
 }
+
+
