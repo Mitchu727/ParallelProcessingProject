@@ -1,4 +1,5 @@
 #include <vector>
+#include <functional>
 #include "result.h"
 
 using namespace std;
