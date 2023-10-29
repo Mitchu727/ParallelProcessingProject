@@ -4,4 +4,3 @@ std::vector<float> generateRandomVectorFromUniformDistribution(int size, float m
 std::string vectorToString(const std::vector<float>& vec);
 void printVector (const std::vector<float>& vec);
 float calculateSquareSumOfValuesInVector(std::vector<float> x);
-void printVector (const std::vector<int>& vec); // usunac to

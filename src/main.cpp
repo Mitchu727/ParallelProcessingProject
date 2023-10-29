@@ -5,6 +5,7 @@
 #include "vectorUtils.h"
 #include "randomSearch.h"
 #include "tabuSearch.h"
+#include "point.h"
 
 using namespace std;
 
@@ -21,13 +22,15 @@ int main(int argc, char* argv[])
     // std::vector<int> randomVector = generateRandomVector(10);
     // printVector(randomVector);
 
-    cout << "Losowe szukanie: ";
+    cout << "Random search: ";
     auto res = calculateRandomSearch(calculateFirstFunctionValueForVector, 3);
     res.print();
 
-    cout << "Generowanie sąsiadw dla [2, 3]: ";
-    vector<float> p;
-    p.push_back(2);
-    p.push_back(3);
-    generateNeighborhood(point { p });
+    cout << "Tabu search: ";
+    int dimension = 4;
+    point startingPoint(dimension, 20);
+    float gridScale = 0.1;
+    int maxIterations = 400;
+    int bound = 40;
+    calculateTabuSearch(calculateFirstFunctionValueForVector, startingPoint, gridScale, maxIterations, bound);
 } 

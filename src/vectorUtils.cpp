@@ -24,7 +24,7 @@ float calculateSquareSumOfValuesInVector(vector<float> x) {
 }
 
 void printVector (const vector<float>& vec) {
-  cout << vectorToString(vec);
+  cout << vectorToString(vec) << endl;
 }
 
 string vectorToString(const vector<float>& vec) {
@@ -37,23 +37,4 @@ string vectorToString(const vector<float>& vec) {
   );
 
   return begin + body + end;
-}
-
-// usunac to na dole
-
-string vectorToString(const vector<int>& vec) {
-  string begin("[");
-  string end("]");
-  std::string body = accumulate(++vec.begin(), vec.end(), std::string(to_string(vec[0])), 
-    [](const string &a, int b) -> string {
-      return a + ", " + to_string(b);
-    }
-  );
-
-  return begin + body + end;
-}
-
-
-void printVector (const vector<int>& vec) {
-  cout << vectorToString(vec);
 }
