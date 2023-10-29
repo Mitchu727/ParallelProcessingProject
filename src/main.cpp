@@ -4,6 +4,7 @@
 #include "secondFunction.h"
 #include "vectorUtils.h"
 #include "randomSearch.h"
+#include "tabuSearch.h"
 
 using namespace std;
 
@@ -23,4 +24,10 @@ int main(int argc, char* argv[])
     cout << "Losowe szukanie: ";
     auto res = calculateRandomSearch(calculateFirstFunctionValueForVector, 3);
     res.print();
+
+    cout << "Generowanie sąsiadw dla [2, 3]: ";
+    vector<float> p;
+    p.push_back(2);
+    p.push_back(3);
+    generateNeighborhood(point { p });
 } 
