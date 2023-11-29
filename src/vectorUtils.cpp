@@ -24,7 +24,7 @@ float calculateSquareSumOfValuesInVector(vector<float> x) {
 }
 
 void printVector (const vector<float>& vec) {
-  cout << vectorToString(vec);
+  cout << vectorToString(vec) << endl;
 }
 
 string vectorToString(const vector<float>& vec) {
