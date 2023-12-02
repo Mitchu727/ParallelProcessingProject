@@ -40,7 +40,7 @@ int main(int argc, char* argv[])
     int iterations = stoi(argv[4]);
 
     std::ostringstream fileNameStream;
-    fileNameStream << argv[1] << "_" << argv[2] << "_" << argv[3] << "_" << argv[4] << ".csv"; //FIXME lepiej do katalogu
+    fileNameStream << "../output/" << argv[1] << "_" << argv[2] << "_" << argv[3] << "_" << argv[4] << ".csv";
     ofstream csvOutputFile;
     csvOutputFile.open(fileNameStream.str());
 
