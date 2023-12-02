@@ -1,36 +1,82 @@
 #include <iostream> 
+#include <fstream>
 #include <vector>
+#include <sstream>
+#include <string>
 #include "firstFunction.h"
 #include "secondFunction.h"
 #include "vectorUtils.h"
 #include "randomSearch.h"
 #include "tabuSearch.h"
 #include "point.h"
+#include "result.h"
 
 using namespace std;
 
 int main(int argc, char* argv[]) 
 { 
-    cout << "Hello world" <<endl;
-    vector<float> vect = generateRandomVectorFromUniformDistribution(2, -10., 10.);
-    cout << "Wielkość wektora: " << vect.size() <<endl; 
-    cout << "Wektor:" << endl;
-    printVector(vect);
-    cout << endl << "Wartość funkcji 1:" << calculateFirstFunctionValueForVector(vect);
-    cout << endl << "Wartość funkcji 2:" << calculateSecondFunctionValueForVector(vect);
-    cout << endl;
     // std::vector<int> randomVector = generateRandomVector(10);
     // printVector(randomVector);
+    string optimizationType = argv[1];
+    if (optimizationType != "random" && optimizationType != "tabu") throw invalid_argument("Uknown optimization type: " + optimizationType);
 
-    cout << "Random search: ";
-    auto res = calculateRandomSearch(calculateFirstFunctionValueForVector, 3);
-    res.print();
+    function<float(vector<float>)> function;
+    float lowerBound;
+    float upperBound;
+    string functionToOptimize = argv[2];
+    if (functionToOptimize == "1") {
+        function = calculateFirstFunctionValueForVector;
+        lowerBound = -40;
+        upperBound = 40;
+    } else if (functionToOptimize == "2") {
+        function = calculateSecondFunctionValueForVector;
+        lowerBound = -30;
+        upperBound = 30;
+    } else {
+        throw invalid_argument("Uknown function to optimize: " + functionToOptimize);
+    }
 
-    cout << "Tabu search: ";
-    int dimension = 4;
-    point startingPoint(dimension, 20);
-    float gridScale = 0.1;
-    int maxIterations = 400;
-    int bound = 40;
-    calculateTabuSearch(calculateFirstFunctionValueForVector, startingPoint, gridScale, maxIterations, bound);
+    int dimensions = stoi(argv[3]);
+    int iterations = stoi(argv[4]);
+
+    std::ostringstream fileNameStream;
+    fileNameStream << argv[1] << "_" << argv[2] << "_" << argv[3] << "_" << argv[4] << ".csv"; //FIXME lepiej do katalogu
+    ofstream csvOutputFile;
+    csvOutputFile.open(fileNameStream.str());
+
+    // result foundMinimum;
+
+    if (optimizationType == "random") {
+        cout << "Performing random search:" << endl;
+        result foundMinimum = minimizeFunctionUsingRandomSearch(
+            function,
+            dimensions,
+            lowerBound,
+            upperBound,
+            iterations
+        );
+        foundMinimum.print();
+    } else if (optimizationType == "tabu")
+    {
+        // calculateTabuSearch(function, startingPoint, gridScale, maxIterations, bound);
+    }
+
+    csvOutputFile.close();
+    
+
+
+
+
+    // cout << "Random search: ";
+    // result res = minimizeFuntionUsingRandomSearch(calculateFirstFunctionValueForVector, 3);
+    // res.print();
+
+    // cout << "Tabu search: " << endl;
+    // int dimension = 4;
+    // point startingPoint(dimension, 20);
+    // printVector(startingPoint);
+    // float gridScale = 0.1;
+    // int maxIterations = 400;
+    // int bound = 40;
+    // calculateTabuSearch(calculateFirstFunctionValueForVector, startingPoint, gridScale, maxIterations, bound);
 } 

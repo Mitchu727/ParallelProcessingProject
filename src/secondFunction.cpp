@@ -8,8 +8,9 @@ using namespace std;
 
 float calculateCosSum(vector<float> x) {
   float value = 0;
-  //TODO spróbować ładniej
-  for (size_t i = 0; i < x.size(); ++i) {
+  size_t i;
+  #pragma omp parallel for shared(x) private(i) reduction(+:value)
+  for (i = 0; i < x.size(); ++i) {
       value += cos(2*M_PI*x[i]);
   };
   return value;

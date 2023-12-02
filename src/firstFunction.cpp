@@ -8,8 +8,9 @@ using namespace std;
 
 float calculateCosProduct(vector<float> x) {
   float value = 1;
-  //TODO spróbować ładniej
-  for (size_t i = 0; i < x.size(); ++i) {
+  size_t i;
+  #pragma omp parallel for shared(x) private(i) reduction(*:value)
+  for (i = 0; i < x.size(); ++i) {
       value *= cos(x[i]/(i+1));
   };
   return value;

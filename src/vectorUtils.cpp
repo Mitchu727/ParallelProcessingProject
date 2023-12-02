@@ -20,7 +20,13 @@ vector<float> generateRandomVectorFromUniformDistribution(int size, float minVal
 }
 
 float calculateSquareSumOfValuesInVector(vector<float> x) {
-  return std::inner_product( x.begin(), x.end(), x.begin(), 0 );
+  int i;
+  float sum = 0;
+  #pragma omp parallel for shared(x) private(i) reduction(+:sum)
+  for(i=0; i<x.size(); i++) {
+    sum = x[i]*x[i];
+  }
+  return sum;
 }
 
 void printVector (const vector<float>& vec) {

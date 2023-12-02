@@ -12,22 +12,25 @@ using namespace std;
 
 result calculateTabuSearch(const function<float(vector<float>)>& targetFunction, const point& startingPoint, const float gridScale, const int maxIterations, const float bound)
 {
-    result tmpMinimum(targetFunction(startingPoint), startingPoint);
+    result foundMinimum = result(targetFunction(startingPoint), startingPoint);
     vector<result> tabuList;
+
+    cout << "it: 0\t";
+    foundMinimum.print();
 
     for (int i = 1; i <= maxIterations; i++) {
         cout << "it: " << i << "\t";
         int requiredNeighbors = 20;
-        vector<point> neighborhood = generateNeighborhood(tmpMinimum.x, tabuList, requiredNeighbors, gridScale, bound);
+        vector<point> neighborhood = generateNeighborhood(foundMinimum.x, tabuList, requiredNeighbors, gridScale, bound);
         if (neighborhood.empty()) break;
         
         vector<result> resultsForCurrentNeighborhood = calculateTargetFunctionForNeighborhood(targetFunction, neighborhood);
         updateTabuList(tabuList, resultsForCurrentNeighborhood);
-        updateMinimum(tmpMinimum, resultsForCurrentNeighborhood);
-        tmpMinimum.print();
+        updateMinimum(foundMinimum, resultsForCurrentNeighborhood);
+        foundMinimum.print();
     }
 
-    result result(tmpMinimum.y, tmpMinimum.x);
+    result result(foundMinimum.y, foundMinimum.x);
     result.print();
     return result;
 }
@@ -99,6 +102,8 @@ vector<point> generateNeighborhood(const point& startingPoint, const vector<resu
                                              (-1, -1), (-1, 0), (-1, -1)]
 
 */
+
+//TODO nie jestem pewien czy do jest dobry pomysł
 vector<point> generateNeighborhoodWithConstantDistance(const point& pointZero, float distance, float bound) {
     int pointsDimensions = pointZero.size();
 
@@ -139,6 +144,7 @@ vector<point> withoutDuplicates(const vector<point>& vec) {
 
 vector<result> calculateTargetFunctionForNeighborhood(const function<float(vector<float>)>& targetFunction, const vector<point>& neighborhood) {
     vector<result> resultsForNeighborhood;
+    // TODO zrónowleglenie
     for (point neighbor : neighborhood) {
         float y = targetFunction(neighbor);
         result resultForNeighbor(y, neighbor); 
@@ -151,9 +157,9 @@ void updateTabuList(vector<result>& tabuList, const vector<result>& resultsForNe
     tabuList.insert(tabuList.end(), resultsForNeighborhood.begin(), resultsForNeighborhood.end());
 }
 
-void updateMinimum(result& tmpMinimum, const vector<result>& resultsForNeighborhood) {
+void updateMinimum(result& foundMinimum, const vector<result>& resultsForNeighborhood) {
     auto it = min_element(resultsForNeighborhood.begin(), resultsForNeighborhood.end());
-    if (*it < tmpMinimum) {
-        tmpMinimum = *it;
+    if (*it < foundMinimum) {
+        foundMinimum = *it;
     }
 }
