@@ -22,7 +22,7 @@ result minimizeFunctionUsingRandomSearch(function<float(vector<float>)> targetFu
     checkForPositive(iterations, "iterations");
 
     // # pragma omp parallel shared(iterations, dimension, lowerBound, upperBound, x_min, y_min, fileLog, saveToLog) private(i, x ,y) //DO ZAPISU DO PLIKU
-    #pragma omp parallel for shared(iterations, dimension, lowerBound, upperBound, x_min, y_min) private(i, x ,y) schedule(static)
+    #pragma omp parallel for shared(iterations, dimension, lowerBound, upperBound, x_min, y_min) private(i, x ,y)
     for (i = 0; i < iterations; i++) {
         x = generateRandomVectorFromUniformDistribution(dimension, lowerBound, upperBound);
         y = targetFunction(x);
