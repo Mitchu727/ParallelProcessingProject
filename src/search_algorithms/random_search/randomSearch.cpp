@@ -14,38 +14,69 @@ void checkForPositive(int param, string name) {
 
 result minimizeFunctionUsingRandomSearch(function<float(vector<float>)> targetFunction, int dimension, ofstream& fileLog, bool saveToLog, float lowerBound, float upperBound, int iterations)
 {
-    float y, y_min_in_thread_scope, y_min = numeric_limits<float>::infinity();
-    vector<float> x, x_min, x_min_in_thread_scope;
+    float y, y_min = numeric_limits<float>::infinity();
+    vector<float> x, x_min;
     int i;
 
     checkForPositive(dimension, "dimension");
     checkForPositive(iterations, "iterations");
 
     // # pragma omp parallel shared(iterations, dimension, lowerBound, upperBound, x_min, y_min, fileLog, saveToLog) private(i, x ,y) //DO ZAPISU DO PLIKU
-    # pragma omp parallel shared(iterations, dimension, lowerBound, upperBound, x_min, y_min) private(i, x ,y, x_min_in_thread_scope, y_min_in_thread_scope) 
-    {
-        y_min_in_thread_scope = numeric_limits<float>::infinity();
-        #pragma omp for
-        for (i = 0; i < iterations; i++) {
-            x = generateRandomVectorFromUniformDistribution(dimension, lowerBound, upperBound);
-            y = targetFunction(x);
-            if (y < y_min_in_thread_scope) {
-                y_min_in_thread_scope = y;
-                x_min_in_thread_scope = x;
+    #pragma omp parallel for shared(iterations, dimension, lowerBound, upperBound, x_min, y_min) private(i, x ,y)
+    for (i = 0; i < iterations; i++) {
+        x = generateRandomVectorFromUniformDistribution(dimension, lowerBound, upperBound);
+        y = targetFunction(x);
+        #pragma omp critical 
+        {
+            if (y < y_min) {
+                y_min = y;
+                x_min = x;
             }
-            //DO ZAPISU DO PLIKU - ZAPYTAĆ 
+            //DO ZAPISU DO PLIKU
             // if (saveToLog) { 
-            //    fileLog <<  y_min << "," << y << endl; 
+            // fileLog <<  y_min << "," << y << endl; 
             // }
         }
-        #pragma omp critical
-        {
-           if (y_min_in_thread_scope < y_min) {
-                y_min = y_min_in_thread_scope;
-                x_min = x_min_in_thread_scope;
-            } 
-        }
     }
+    
 
     return result{y_min, x_min};
 }
+
+// Otymalizacja - każdy wątek liczy swoje minimum
+// result minimizeFunctionUsingRandomSearch(function<float(vector<float>)> targetFunction, int dimension, ofstream& fileLog, bool saveToLog, float lowerBound, float upperBound, int iterations)
+// {
+//     float y, y_min_in_thread_scope, y_min = numeric_limits<float>::infinity();
+//     vector<float> x, x_min, x_min_in_thread_scope;
+//     int i;
+
+//     checkForPositive(dimension, "dimension");
+//     checkForPositive(iterations, "iterations");
+
+//     // # pragma omp parallel shared(iterations, dimension, lowerBound, upperBound, x_min, y_min, fileLog, saveToLog) private(i, x ,y) //DO ZAPISU DO PLIKU
+//     # pragma omp parallel shared(iterations, dimension, lowerBound, upperBound, x_min, y_min) private(i, x ,y, x_min_in_thread_scope, y_min_in_thread_scope) 
+//     {
+//         y_min_in_thread_scope = numeric_limits<float>::infinity();
+//         #pragma omp for
+//         for (i = 0; i < iterations; i++) {
+//             x = generateRandomVectorFromUniformDistribution(dimension, lowerBound, upperBound);
+//             y = targetFunction(x);
+//             if (y < y_min_in_thread_scope) {
+//                 y_min_in_thread_scope = y;
+//                 x_min_in_thread_scope = x;
+//             }
+//             //DO ZAPISU DO PLIKU - ZAPYTAĆ 
+//             // if (saveToLog) { 
+//             //    fileLog <<  y_min << "," << y << endl; 
+//             // }
+//         }
+//         #pragma omp critical
+//         {
+//            if (y_min_in_thread_scope < y_min) {
+//                 y_min = y_min_in_thread_scope;
+//                 x_min = x_min_in_thread_scope;
+//             } 
+//         }
+//     }
+//     return result{y_min, x_min};
+// }

@@ -4,8 +4,9 @@
 
 using namespace std;
 
+std::default_random_engine generator;
+
 float generateRandomNumberFromUniformDistribution(float minValue, float maxValue) {
-  std::default_random_engine generator;
   std::uniform_real_distribution<double> distribution(minValue,maxValue);
   return distribution(generator);
 }

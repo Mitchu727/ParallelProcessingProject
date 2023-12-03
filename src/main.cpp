@@ -15,8 +15,6 @@ using namespace std;
 
 int main(int argc, char* argv[]) 
 { 
-    // std::vector<int> randomVector = generateRandomVector(10);
-    // printVector(randomVector);
     string optimizationType = argv[1];
     if (optimizationType != "random" && optimizationType != "tabu") throw invalid_argument("Uknown optimization type: " + optimizationType);
 
