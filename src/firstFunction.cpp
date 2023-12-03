@@ -9,7 +9,7 @@ using namespace std;
 float calculateCosProduct(vector<float> x) {
   float value = 1;
   size_t i;
-  #pragma omp parallel for shared(x) private(i) reduction(*:value)
+  // #pragma omp parallel for shared(x) private(i) reduction(*:value) spowalnia program nawet z omp nested na false
   for (i = 0; i < x.size(); ++i) {
       value *= cos(x[i]/(i+1));
   };

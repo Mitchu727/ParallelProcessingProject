@@ -12,7 +12,7 @@ void checkForPositive(int param, string name) {
         throw invalid_argument("Nonpositive argument " + name + " in calculateRandomSearch: " + to_string(param));
 }
 
-result minimizeFunctionUsingRandomSearch(function<float(vector<float>)> targetFunction, int dimension, float lowerBound, float upperBound, int iterations)
+result minimizeFunctionUsingRandomSearch(function<float(vector<float>)> targetFunction, int dimension, ofstream& fileLog, bool saveToLog, float lowerBound, float upperBound, int iterations)
 {
     float y, y_min = numeric_limits<float>::infinity();
     vector<float> x, x_min;
@@ -21,18 +21,25 @@ result minimizeFunctionUsingRandomSearch(function<float(vector<float>)> targetFu
     checkForPositive(dimension, "dimension");
     checkForPositive(iterations, "iterations");
 
+    // # pragma omp parallel for shared(iterations, dimension, lowerBound, upperBound, x_min, y_min, fileLog, saveToLog) private(i, x ,y) //DO ZAPISU DO PLIKU
     # pragma omp parallel for shared(iterations, dimension, lowerBound, upperBound, x_min, y_min) private(i, x ,y)
     for (i = 0; i < iterations; i++) {
+        // atoi("64");
         x = generateRandomVectorFromUniformDistribution(dimension, lowerBound, upperBound);
         y = targetFunction(x);
         #pragma omp critical 
         {
+            // Teoretycznie da się to zoptymalizować jeszcze bardziej - każdy wątek może wyliczyć swoje minimum, a potem można wyliczyć minimum z kilku wątków
             if (y < y_min) {
                 y_min = y;
                 x_min = x;
             }
+            //DO ZAPISU DO PLIKU
+            // if (saveToLog) { 
+            //    fileLog <<  y_min << "," << y << endl; 
+            // }
         }
     }
 
-    return result{y_min, x_min};
+    return result{y_min, generateRandomVectorFromUniformDistribution(dimension, lowerBound, upperBound)};
 }

@@ -5,12 +5,8 @@ build:
 	[ ! -d "../build" ] && mkdir ../build; \
 	[ ! -d "../output" ] && mkdir ../output; \
 	g++ vectorUtils.cpp secondFunction.cpp firstFunction.cpp search_algorithms/result.cpp search_algorithms/random_search/randomSearch.cpp search_algorithms/tabu_search/tabuSearch.cpp main.cpp -o ../build/main $(CFLAGS)
-
-buildWithOpenMp:
-	[ ! -d "../build" ] && mkdir ../build; \
-	[ ! -d "../output" ] && mkdir ../build; \
-	g++ -fopenmp vectorUtils.cpp secondFunction.cpp firstFunction.cpp search_algorithms/result.cpp search_algorithms/random_search/randomSearch.cpp search_algorithms/tabu_search/tabuSearch.cpp main.cpp -o ../build/mainWithOpenMp $(CFLAGS)
-
+	g++ -fopenmp vectorUtils.cpp secondFunction.cpp firstFunction.cpp search_algorithms/result.cpp search_algorithms/random_search/randomSearch.cpp search_algorithms/tabu_search/tabuSearch.cpp main.cpp -o ../build/mainOpenMp $(CFLAGS)
+	
 buildAndRun: build
 	../build/main
 

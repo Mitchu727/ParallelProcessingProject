@@ -39,10 +39,24 @@ int main(int argc, char* argv[])
     int dimensions = stoi(argv[3]);
     int iterations = stoi(argv[4]);
 
-    std::ostringstream fileNameStream;
-    fileNameStream << "../output/" << argv[1] << "_" << argv[2] << "_" << argv[3] << "_" << argv[4] << ".csv";
+    bool saveToFile;
     ofstream csvOutputFile;
-    csvOutputFile.open(fileNameStream.str());
+    if (argc == 6) { //TODO trzeba to naprawić bo to jest przydkie
+        string saveToFileFlag = argv[5];
+        if (saveToFileFlag == "T") {
+            saveToFile = true;
+            std::ostringstream fileNameStream;
+            fileNameStream << "../output/" << argv[1] << "_" << argv[2] << "_" << argv[3] << "_" << argv[4] << ".csv";
+            csvOutputFile.open(fileNameStream.str());
+            cout << "Zapis do pliku" << endl;
+        } else {
+            saveToFile = false;
+            cout << "Brak zapisu do pliku" << endl;
+        }
+    } else {
+        saveToFile = false;
+        cout << "Brak zapisu do pliku" << endl;
+    }
 
     // result foundMinimum;
 
@@ -51,6 +65,8 @@ int main(int argc, char* argv[])
         result foundMinimum = minimizeFunctionUsingRandomSearch(
             function,
             dimensions,
+            csvOutputFile,
+            saveToFile,
             lowerBound,
             upperBound,
             iterations

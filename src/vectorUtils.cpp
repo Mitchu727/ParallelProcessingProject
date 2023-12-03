@@ -4,9 +4,8 @@
 
 using namespace std;
 
-std::default_random_engine generator;
-
 float generateRandomNumberFromUniformDistribution(float minValue, float maxValue) {
+  std::default_random_engine generator;
   std::uniform_real_distribution<double> distribution(minValue,maxValue);
   return distribution(generator);
 }
@@ -22,7 +21,7 @@ vector<float> generateRandomVectorFromUniformDistribution(int size, float minVal
 float calculateSquareSumOfValuesInVector(vector<float> x) {
   int i;
   float sum = 0;
-  #pragma omp parallel for shared(x) private(i) reduction(+:sum)
+  // #pragma omp parallel for shared(x) private(i) reduction(+:sum) spowalnia program nawet z omp nested ustawionym na false
   for(i=0; i<x.size(); i++) {
     sum = x[i]*x[i];
   }
