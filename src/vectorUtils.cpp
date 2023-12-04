@@ -24,7 +24,7 @@ float calculateSquareSumOfValuesInVector(vector<float> x) {
   float sum = 0;
   // #pragma omp parallel for shared(x) private(i) reduction(+:sum) spowalnia program nawet z omp nested ustawionym na false
   for(i=0; i<x.size(); i++) {
-    sum = x[i]*x[i];
+    sum += x[i]*x[i];
   }
   return sum;
 }

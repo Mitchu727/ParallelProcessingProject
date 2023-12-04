@@ -38,9 +38,8 @@ result minimizeFunctionUsingRandomSearch(function<float(vector<float>)> targetFu
             // }
         }
     }
-    
 
-    return result{y_min, generateRandomVectorFromUniformDistribution(dimension, lowerBound, upperBound)};
+    return result{y_min, x_min};
 }
 
 // Otymalizacja - każdy wątek liczy swoje minimum
