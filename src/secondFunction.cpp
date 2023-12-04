@@ -17,5 +17,5 @@ float calculateCosSum(vector<float> x) {
 }
 
 float calculateSecondFunctionValueForVector(vector<float> x) {
-    return 20*exp(-0.2 * sqrt(calculateSquareSumOfValuesInVector(x)/x.size())) - exp(calculateCosSum(x)/x.size()) + 20 + M_E;
+    return -20*exp(-0.2 * sqrt(calculateSquareSumOfValuesInVector(x)/x.size())) - exp(calculateCosSum(x)/x.size()) + 20 + M_E;
 }

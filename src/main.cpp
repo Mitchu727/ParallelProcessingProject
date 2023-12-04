@@ -70,9 +70,15 @@ int main(int argc, char* argv[])
             iterations
         );
         foundMinimum.print();
-    } else if (optimizationType == "tabu")
-    {
-        // calculateTabuSearch(function, startingPoint, gridScale, maxIterations, bound);
+    } else if (optimizationType == "tabu") {
+        minimizeFunctionUsingTabuSearch(
+            function,
+            dimensions,
+            lowerBound,
+            upperBound,
+            iterations
+        );
+        // calculateTabuSearch(function, startingPoint, 0.1, iterations, upperBound);
     }
 
     csvOutputFile.close();

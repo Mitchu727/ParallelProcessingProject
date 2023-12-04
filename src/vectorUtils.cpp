@@ -1,6 +1,8 @@
 #include <vector>
 #include <bits/stdc++.h> 
 #include "vectorUtils.h"
+#include "algorithm"
+#include "point.h"
 
 using namespace std;
 
@@ -15,6 +17,14 @@ vector<float> generateRandomVectorFromUniformDistribution(int size, float minVal
     vector<float> generatedVector(size);
     for (size_t i = 0; i < generatedVector.size(); i++) {
         generatedVector[i] = generateRandomNumberFromUniformDistribution(minValue, maxValue);
+    }
+    return generatedVector;
+}
+
+vector<float> generateRandomVectorInNieghborhoodFromUniformDistribution(point basePoint, float distance, float minValue, float maxValue) {
+    vector<float> generatedVector(basePoint.size());
+    for (size_t i = 0; i < generatedVector.size(); i++) {
+        generatedVector[i] = generateRandomNumberFromUniformDistribution(max(minValue, basePoint[i]-distance), min(maxValue, basePoint[i]+distance));
     }
     return generatedVector;
 }

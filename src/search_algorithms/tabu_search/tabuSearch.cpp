@@ -10,6 +10,39 @@
 using namespace std;
 
 
+result minimizeFunctionUsingTabuSearch(const function<float(vector<float>)>& targetFunction, int dimension, float lowerBound, float upperBound, int iterations)
+{
+    const float gridScale = 0.1;
+    point startingPoint = generateRandomVectorFromUniformDistribution(dimension, lowerBound, upperBound);
+    result foundMinimum = result(targetFunction(startingPoint), startingPoint);
+    vector<result> tabuList;
+
+    int neigboursNumber = 100;
+
+    cout << "it: 0\t";
+    foundMinimum.print();
+
+    for (int i = 1; i <= iterations; i++) {
+        vector<point> neighborhood;
+        cout << "it: " << i << "\t" << "neighbors number:" << neighborhood.size() << "\t";
+        
+        for (int j=0; j<neigboursNumber; j++)
+            neighborhood.push_back(generateRandomVectorInNieghborhoodFromUniformDistribution(foundMinimum.x, 2, lowerBound, upperBound));
+            
+        vector<result> resultsForCurrentNeighborhood = calculateTargetFunctionForNeighborhood(targetFunction, neighborhood);
+        updateTabuList(tabuList, resultsForCurrentNeighborhood);
+        updateMinimum(foundMinimum, resultsForCurrentNeighborhood);
+        foundMinimum.print();
+    }
+
+    result result(foundMinimum.y, foundMinimum.x);
+    result.print();
+    return result;
+}
+
+
+// działa dla 4 przy około 700 iteracjach
+// dla mniejszych wymiarowości też działa, dla większej się wywala
 result calculateTabuSearch(const function<float(vector<float>)>& targetFunction, const point& startingPoint, const float gridScale, const int maxIterations, const float bound)
 {
     result foundMinimum = result(targetFunction(startingPoint), startingPoint);
