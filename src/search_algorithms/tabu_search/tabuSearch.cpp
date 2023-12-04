@@ -12,7 +12,8 @@ using namespace std;
 int const TABU_LIST_MAX_SIZE = 10;
 int const NEIGHBORS_SIZE = 1000;
 float const TABU_LIST_FORBIDDEN_NEIGHBORHOOD_DISTANCE = 0.1;
-float EXPLORATION_DISTANCE = 1;
+float EXPLORATION_DISTANCE = 6;
+
 result minimizeFunctionUsingTabuSearch(const function<float(vector<float>)>& targetFunction, int dimension, float lowerBound, float upperBound, int iterations)
 {
     point startingPoint = generateRandomVectorFromUniformDistribution(dimension, lowerBound, upperBound);
@@ -25,7 +26,7 @@ result minimizeFunctionUsingTabuSearch(const function<float(vector<float>)>& tar
         point x, x_min;
         float y, y_min = numeric_limits<float>::infinity();
         for (int j=0; j<NEIGHBORS_SIZE; j++)
-            x = generateRandomVectorInNieghborhoodFromUniformDistribution(foundMinimum.x, 2, lowerBound, upperBound);
+            x = generateRandomVectorInNeighborhoodFromUniformDistribution(foundMinimum.x, EXPLORATION_DISTANCE, lowerBound, upperBound);
             y = targetFunction(x);
             if (!checkIfTabuListContains(tabuList, x)) {
                 if (y<y_min) {
@@ -203,9 +204,9 @@ void updateTabuList(vector<result>& tabuList, const vector<result>& resultsForNe
 
 void insertInTabuList(vector<result>& tabuList, const result& resultToInsert) {
     tabuList.push_back(resultToInsert);
-    // if (tabuList.size() > TABU_LIST_MAX_SIZE) {
-    //     tabuList.erase(tabuList.begin());
-    // }
+    if (tabuList.size() > TABU_LIST_MAX_SIZE) {
+        tabuList.erase(tabuList.begin());
+    }
 }
 
 bool checkIfTabuListContains(vector<result>& tabuList, point pointToCheck) {

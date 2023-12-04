@@ -21,7 +21,7 @@ vector<float> generateRandomVectorFromUniformDistribution(int size, float minVal
     return generatedVector;
 }
 
-vector<float> generateRandomVectorInNieghborhoodFromUniformDistribution(point basePoint, float distance, float minValue, float maxValue) {
+vector<float> generateRandomVectorInNeighborhoodFromUniformDistribution(point basePoint, float distance, float minValue, float maxValue) {
     vector<float> generatedVector(basePoint.size());
     for (size_t i = 0; i < generatedVector.size(); i++) {
         generatedVector[i] = generateRandomNumberFromUniformDistribution(max(minValue, basePoint[i]-distance), min(maxValue, basePoint[i]+distance));

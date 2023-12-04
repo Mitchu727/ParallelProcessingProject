@@ -78,7 +78,6 @@ int main(int argc, char* argv[])
             upperBound,
             iterations
         );
-        // calculateTabuSearch(function, startingPoint, 0.1, iterations, upperBound);
     }
 
     csvOutputFile.close();
