@@ -22,23 +22,26 @@ result minimizeFunctionUsingTabuSearch(const function<float(vector<float>)>& tar
 
     for (int i = 1; i <= iterations; i++) {
         vector<point> neighborhood;
-        cout << "it: " << i << "\t";
+        // cout << "it: " << i << "\t";
         point x, x_min;
         float y, y_min = numeric_limits<float>::infinity();
-        for (int j=0; j<NEIGHBORS_SIZE; j++)
+        #pragma omp parallel for shared(NEIGHBORS_SIZE, dimension, lowerBound, upperBound, x_min, y_min, foundMinimum) private(i, x ,y)
+        for (int j=0; j<NEIGHBORS_SIZE; j++) {
             x = generateRandomVectorInNeighborhoodFromUniformDistribution(foundMinimum.x, EXPLORATION_DISTANCE, lowerBound, upperBound);
             y = targetFunction(x);
             if (!checkIfTabuListContains(tabuList, x)) {
+                #pragma omp critical
                 if (y<y_min) {
                     y_min = y;
                     x_min = x;
                 }
             }
+        }
         if (y_min < foundMinimum.y) {
             foundMinimum = result(y_min, x_min);
         }
         insertInTabuList(tabuList, foundMinimum);
-        foundMinimum.print();
+        // foundMinimum.print();
             // jeśli tabulista nie zawiera rozwiązania
             // sekcja krytyczna
             // jeśli rozwiązanie jest lepsze niż dotychczas znalezione to zaaktualizuj najlepsze znalezione

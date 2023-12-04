@@ -71,13 +71,15 @@ int main(int argc, char* argv[])
         );
         foundMinimum.print();
     } else if (optimizationType == "tabu") {
-        minimizeFunctionUsingTabuSearch(
+        cout << "Performing tabu search:" << endl;
+        result foundMinimum = minimizeFunctionUsingTabuSearch(
             function,
             dimensions,
             lowerBound,
             upperBound,
             iterations
         );
+        foundMinimum.print();
     }
 
     csvOutputFile.close();
