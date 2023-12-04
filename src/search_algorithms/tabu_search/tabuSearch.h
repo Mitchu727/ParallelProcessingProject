@@ -17,3 +17,7 @@ void removeTabuPoints(vector<point>& neighborhood, const vector<result>& tabuLis
 vector<point> withoutDuplicates(const vector<point>& vec);
 void updateTabuList(vector<result>& tabuList, const vector<result>& resultsForNeighborhood);
 void updateMinimum(result& tmpMinimum, const vector<result>& resultsForNeighborhood);
+
+void insertInTabuList(vector<result>& tabuList, const result& resultToInsert);
+bool checkIfTabuListContains(vector<result>& tabuList, point pointToCheck);
+bool checkDistanceBetweenPointsIsSmallerThan(point firstPoint, point secondPoint, float distance);

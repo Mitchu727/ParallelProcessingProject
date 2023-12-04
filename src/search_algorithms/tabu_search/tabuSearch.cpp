@@ -9,35 +9,46 @@
 
 using namespace std;
 
-
+int const TABU_LIST_MAX_SIZE = 10;
+int const NEIGHBORS_SIZE = 1000;
+float const TABU_LIST_FORBIDDEN_NEIGHBORHOOD_DISTANCE = 0.1;
+float EXPLORATION_DISTANCE = 1;
 result minimizeFunctionUsingTabuSearch(const function<float(vector<float>)>& targetFunction, int dimension, float lowerBound, float upperBound, int iterations)
 {
-    const float gridScale = 0.1;
     point startingPoint = generateRandomVectorFromUniformDistribution(dimension, lowerBound, upperBound);
     result foundMinimum = result(targetFunction(startingPoint), startingPoint);
     vector<result> tabuList;
 
-    int neigboursNumber = 100;
-
-    cout << "it: 0\t";
-    foundMinimum.print();
-
     for (int i = 1; i <= iterations; i++) {
         vector<point> neighborhood;
-        cout << "it: " << i << "\t" << "neighbors number:" << neighborhood.size() << "\t";
-        
-        for (int j=0; j<neigboursNumber; j++)
-            neighborhood.push_back(generateRandomVectorInNieghborhoodFromUniformDistribution(foundMinimum.x, 2, lowerBound, upperBound));
-            
-        vector<result> resultsForCurrentNeighborhood = calculateTargetFunctionForNeighborhood(targetFunction, neighborhood);
-        updateTabuList(tabuList, resultsForCurrentNeighborhood);
-        updateMinimum(foundMinimum, resultsForCurrentNeighborhood);
+        cout << "it: " << i << "\t";
+        point x, x_min;
+        float y, y_min = numeric_limits<float>::infinity();
+        for (int j=0; j<NEIGHBORS_SIZE; j++)
+            x = generateRandomVectorInNieghborhoodFromUniformDistribution(foundMinimum.x, 2, lowerBound, upperBound);
+            y = targetFunction(x);
+            if (!checkIfTabuListContains(tabuList, x)) {
+                if (y<y_min) {
+                    y_min = y;
+                    x_min = x;
+                }
+            }
+        if (y_min < foundMinimum.y) {
+            foundMinimum = result(y_min, x_min);
+        }
+        insertInTabuList(tabuList, foundMinimum);
         foundMinimum.print();
-    }
+            // jeśli tabulista nie zawiera rozwiązania
+            // sekcja krytyczna
+            // jeśli rozwiązanie jest lepsze niż dotychczas znalezione to zaaktualizuj najlepsze znalezione
+        // jeśli najlepsze rozwiązanie w sąsiedztwie jest lepsze niż globalne to ustaw to najlepsze jako nowe
+        // dodaj to rozwiązanie do tabu listy 
 
-    result result(foundMinimum.y, foundMinimum.x);
-    result.print();
-    return result;
+
+        // vector<result> resultsForCurrentNeighborhood = calculateTargetFunctionForNeighborhood(targetFunction, neighborhood);
+        // updateTabuList(tabuList, resultsForCurrentNeighborhood);
+    }
+    return foundMinimum;
 }
 
 
@@ -189,6 +200,30 @@ vector<result> calculateTargetFunctionForNeighborhood(const function<float(vecto
 void updateTabuList(vector<result>& tabuList, const vector<result>& resultsForNeighborhood) {
     tabuList.insert(tabuList.end(), resultsForNeighborhood.begin(), resultsForNeighborhood.end());
 }
+
+void insertInTabuList(vector<result>& tabuList, const result& resultToInsert) {
+    tabuList.push_back(resultToInsert);
+    // if (tabuList.size() > TABU_LIST_MAX_SIZE) {
+    //     tabuList.erase(tabuList.begin());
+    // }
+}
+
+bool checkIfTabuListContains(vector<result>& tabuList, point pointToCheck) {
+    for (int i=0; i<tabuList.size(); i++) {
+        if (checkDistanceBetweenPointsIsSmallerThan(tabuList[i].x, pointToCheck, TABU_LIST_FORBIDDEN_NEIGHBORHOOD_DISTANCE)) return true;
+    }
+    return false;
+}
+
+bool checkDistanceBetweenPointsIsSmallerThan(point firstPoint, point secondPoint, float distance) {
+    for (int i=0; i<firstPoint.size(); i++) {
+        if (abs(firstPoint[i]-secondPoint[i]) < distance) {
+            return true;
+        }
+    }
+    return false;
+}
+
 
 void updateMinimum(result& foundMinimum, const vector<result>& resultsForNeighborhood) {
     auto it = min_element(resultsForNeighborhood.begin(), resultsForNeighborhood.end());
