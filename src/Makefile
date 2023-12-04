@@ -9,6 +9,3 @@ build:
 	
 buildAndRun: build
 	../build/main
-
-test:
-	g++ vectorUtils.cpp secondFunction.cpp firstFunction.cpp performanceTest.cpp -o test $(CFLAGS)
