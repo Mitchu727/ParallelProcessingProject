@@ -6,13 +6,14 @@
 #include "result.h"
 #include "point.h"
 #include "tabuSearch.h"
+#include "math.h"
 
 using namespace std;
 
-int const TABU_LIST_MAX_SIZE = 10;
-int const NEIGHBORS_SIZE = 1000;
+int const TABU_LIST_MAX_SIZE = 100;
+int const NEIGHBORS_SIZE = 10000;
 float const TABU_LIST_FORBIDDEN_NEIGHBORHOOD_DISTANCE = 0.1;
-float EXPLORATION_DISTANCE = 6;
+float EXPLORATION_DISTANCE = 7;
 
 result minimizeFunctionUsingTabuSearch(const function<float(vector<float>)>& targetFunction, int dimension, float lowerBound, float upperBound, int iterations)
 {
@@ -22,7 +23,7 @@ result minimizeFunctionUsingTabuSearch(const function<float(vector<float>)>& tar
 
     for (int i = 1; i <= iterations; i++) {
         vector<point> neighborhood;
-        // cout << "it: " << i << "\t";
+        cout << "it: " << i << "\t";
         point x, x_min;
         float y, y_min = numeric_limits<float>::infinity();
         #pragma omp parallel for shared(NEIGHBORS_SIZE, dimension, lowerBound, upperBound, x_min, y_min, foundMinimum) private(i, x ,y)
@@ -41,12 +42,7 @@ result minimizeFunctionUsingTabuSearch(const function<float(vector<float>)>& tar
             foundMinimum = result(y_min, x_min);
         }
         insertInTabuList(tabuList, foundMinimum);
-        // foundMinimum.print();
-            // jeśli tabulista nie zawiera rozwiązania
-            // sekcja krytyczna
-            // jeśli rozwiązanie jest lepsze niż dotychczas znalezione to zaaktualizuj najlepsze znalezione
-        // jeśli najlepsze rozwiązanie w sąsiedztwie jest lepsze niż globalne to ustaw to najlepsze jako nowe
-        // dodaj to rozwiązanie do tabu listy 
+        foundMinimum.print();
 
 
         // vector<result> resultsForCurrentNeighborhood = calculateTargetFunctionForNeighborhood(targetFunction, neighborhood);
@@ -192,7 +188,6 @@ vector<point> withoutDuplicates(const vector<point>& vec) {
 
 vector<result> calculateTargetFunctionForNeighborhood(const function<float(vector<float>)>& targetFunction, const vector<point>& neighborhood) {
     vector<result> resultsForNeighborhood;
-    // TODO zrónowleglenie
     for (point neighbor : neighborhood) {
         float y = targetFunction(neighbor);
         result resultForNeighbor(y, neighbor); 
@@ -207,7 +202,9 @@ void updateTabuList(vector<result>& tabuList, const vector<result>& resultsForNe
 
 void insertInTabuList(vector<result>& tabuList, const result& resultToInsert) {
     tabuList.push_back(resultToInsert);
-    if (tabuList.size() > TABU_LIST_MAX_SIZE) {
+    // float tabuListMaxSize = sqrt(resultToInsert.x.size()); to może dać lepsze efekty
+    float tabuListMaxSize = TABU_LIST_MAX_SIZE;
+    if (tabuList.size() > tabuListMaxSize) {
         tabuList.erase(tabuList.begin());
     }
 }
@@ -220,12 +217,11 @@ bool checkIfTabuListContains(vector<result>& tabuList, point pointToCheck) {
 }
 
 bool checkDistanceBetweenPointsIsSmallerThan(point firstPoint, point secondPoint, float distance) {
-    for (int i=0; i<firstPoint.size(); i++) { //TODO do naprawy
-        if (abs(firstPoint[i]-secondPoint[i]) < distance) {
-            return true;
-        }
+    float sum=0;
+    for (int i=0; i<firstPoint.size(); i++) {
+        sum+= pow(firstPoint[i]-secondPoint[i], 2);
     }
-    return false;
+    return sqrt(sum) < distance;
 }
 
 
