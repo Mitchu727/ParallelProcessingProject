@@ -220,7 +220,7 @@ bool checkIfTabuListContains(vector<result>& tabuList, point pointToCheck) {
 }
 
 bool checkDistanceBetweenPointsIsSmallerThan(point firstPoint, point secondPoint, float distance) {
-    for (int i=0; i<firstPoint.size(); i++) {
+    for (int i=0; i<firstPoint.size(); i++) { //TODO do naprawy
         if (abs(firstPoint[i]-secondPoint[i]) < distance) {
             return true;
         }
