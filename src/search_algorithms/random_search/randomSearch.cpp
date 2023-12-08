@@ -33,9 +33,9 @@ result minimizeFunctionUsingRandomSearch(function<float(vector<float>)> targetFu
                 x_min = x;
             }
             //DO ZAPISU DO PLIKU
-            // if (saveToLog) { 
-            // fileLog <<  y_min << "," << y << endl; 
-            // }
+            if (saveToLog) { 
+                fileLog <<  y_min << "," << y << endl; 
+            }
         }
     }
 

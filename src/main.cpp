@@ -75,6 +75,8 @@ int main(int argc, char* argv[])
         result foundMinimum = minimizeFunctionUsingTabuSearch(
             function,
             dimensions,
+            csvOutputFile,
+            saveToFile,
             lowerBound,
             upperBound,
             iterations

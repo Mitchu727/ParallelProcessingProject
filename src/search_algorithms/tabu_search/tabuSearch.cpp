@@ -15,7 +15,7 @@ int const NEIGHBORS_SIZE = 10000;
 float const TABU_LIST_FORBIDDEN_NEIGHBORHOOD_DISTANCE = 0.1;
 float EXPLORATION_DISTANCE = 7;
 
-result minimizeFunctionUsingTabuSearch(const function<float(vector<float>)>& targetFunction, int dimension, float lowerBound, float upperBound, int iterations)
+result minimizeFunctionUsingTabuSearch(const function<float(vector<float>)>& targetFunction, int dimension, ofstream& fileLog, bool saveToLog, float lowerBound, float upperBound, int iterations)
 {
     point startingPoint = generateRandomVectorFromUniformDistribution(dimension, lowerBound, upperBound);
     result foundMinimum = result(targetFunction(startingPoint), startingPoint);
@@ -32,9 +32,11 @@ result minimizeFunctionUsingTabuSearch(const function<float(vector<float>)>& tar
             y = targetFunction(x);
             if (!checkIfTabuListContains(tabuList, x)) {
                 #pragma omp critical
-                if (y<y_min) {
-                    y_min = y;
-                    x_min = x;
+                {
+                    if (y<y_min) {
+                        y_min = y;
+                        x_min = x;
+                    }
                 }
             }
         }
@@ -44,6 +46,9 @@ result minimizeFunctionUsingTabuSearch(const function<float(vector<float>)>& tar
         insertInTabuList(tabuList, foundMinimum);
         foundMinimum.print();
 
+        if (saveToLog) {
+            writeToLog(fileLog, y_min, x_min);
+        }
 
         // vector<result> resultsForCurrentNeighborhood = calculateTargetFunctionForNeighborhood(targetFunction, neighborhood);
         // updateTabuList(tabuList, resultsForCurrentNeighborhood);
@@ -54,30 +59,30 @@ result minimizeFunctionUsingTabuSearch(const function<float(vector<float>)>& tar
 
 // działa dla 4 przy około 700 iteracjach
 // dla mniejszych wymiarowości też działa, dla większej się wywala
-result calculateTabuSearch(const function<float(vector<float>)>& targetFunction, const point& startingPoint, const float gridScale, const int maxIterations, const float bound)
-{
-    result foundMinimum = result(targetFunction(startingPoint), startingPoint);
-    vector<result> tabuList;
+// result calculateTabuSearch(const function<float(vector<float>)>& targetFunction, const point& startingPoint, const float gridScale, const int maxIterations, const float bound)
+// {
+//     result foundMinimum = result(targetFunction(startingPoint), startingPoint);
+//     vector<result> tabuList;
 
-    cout << "it: 0\t";
-    foundMinimum.print();
+//     cout << "it: 0\t";
+//     foundMinimum.print();
 
-    for (int i = 1; i <= maxIterations; i++) {
-        cout << "it: " << i << "\t";
-        int requiredNeighbors = 20;
-        vector<point> neighborhood = generateNeighborhood(foundMinimum.x, tabuList, requiredNeighbors, gridScale, bound);
-        if (neighborhood.empty()) break;
+//     for (int i = 1; i <= maxIterations; i++) {
+//         cout << "it: " << i << "\t";
+//         int requiredNeighbors = 20;
+//         vector<point> neighborhood = generateNeighborhood(foundMinimum.x, tabuList, requiredNeighbors, gridScale, bound);
+//         if (neighborhood.empty()) break;
         
-        vector<result> resultsForCurrentNeighborhood = calculateTargetFunctionForNeighborhood(targetFunction, neighborhood);
-        updateTabuList(tabuList, resultsForCurrentNeighborhood);
-        updateMinimum(foundMinimum, resultsForCurrentNeighborhood);
-        foundMinimum.print();
-    }
+//         vector<result> resultsForCurrentNeighborhood = calculateTargetFunctionForNeighborhood(targetFunction, neighborhood);
+//         updateTabuList(tabuList, resultsForCurrentNeighborhood);
+//         updateMinimum(foundMinimum, resultsForCurrentNeighborhood);
+//         foundMinimum.print();
+//     }
 
-    result result(foundMinimum.y, foundMinimum.x);
-    result.print();
-    return result;
-}
+//     result result(foundMinimum.y, foundMinimum.x);
+//     result.print();
+//     return result;
+// }
 
 /*
     Generate numNeighbors nearest neighbors with condition that 0 < distance < maxDistance.
@@ -92,23 +97,23 @@ result calculateTabuSearch(const function<float(vector<float>)>& targetFunction,
         5. Continue until at least numNeighbors neighbors are gathered
         6. Trim the neighborhood to numNeighbors neighbors
 */
-vector<point> generateNeighborhood(const point& startingPoint, const vector<result>& tabuList, int numNeighbors, float gridScale, float bound) {
-    vector<point> neighborhood;
-    for (float distance = gridScale; distance < bound; distance += gridScale) {
-        vector<point> newDistanceNeighborhood = generateNeighborhoodWithConstantDistance(startingPoint, distance, bound);
-        neighborhood.insert(neighborhood.end(), newDistanceNeighborhood.begin(), newDistanceNeighborhood.end()); 
-        removeTabuPoints(neighborhood, tabuList);
-        if (neighborhood.size() < numNeighbors) 
-            continue;
-        else
-            break;
-    }
+// vector<point> generateNeighborhood(const point& startingPoint, const vector<result>& tabuList, int numNeighbors, float gridScale, float bound) {
+//     vector<point> neighborhood;
+//     for (float distance = gridScale; distance < bound; distance += gridScale) {
+//         vector<point> newDistanceNeighborhood = generateNeighborhoodWithConstantDistance(startingPoint, distance, bound);
+//         neighborhood.insert(neighborhood.end(), newDistanceNeighborhood.begin(), newDistanceNeighborhood.end()); 
+//         removeTabuPoints(neighborhood, tabuList);
+//         if (neighborhood.size() < numNeighbors) 
+//             continue;
+//         else
+//             break;
+//     }
 
-    if (neighborhood.size() > numNeighbors)
-        neighborhood.resize(numNeighbors);
+//     if (neighborhood.size() > numNeighbors)
+//         neighborhood.resize(numNeighbors);
 
-    return neighborhood;
-}
+//     return neighborhood;
+// }
 
 
 /*
@@ -148,57 +153,57 @@ vector<point> generateNeighborhood(const point& startingPoint, const vector<resu
 */
 
 //TODO nie jestem pewien czy do jest dobry pomysł
-vector<point> generateNeighborhoodWithConstantDistance(const point& pointZero, float distance, float bound) {
-    int pointsDimensions = pointZero.size();
+// vector<point> generateNeighborhoodWithConstantDistance(const point& pointZero, float distance, float bound) {
+//     int pointsDimensions = pointZero.size();
 
-    vector<point> neighbors;
-    neighbors.push_back(pointZero);
+//     vector<point> neighbors;
+//     neighbors.push_back(pointZero);
     
-    for (int dimension = 0; dimension < pointsDimensions; dimension++) {
-        vector<point> temporaryNeighbors(neighbors);
-        for (point neighbor : temporaryNeighbors) {
-            float modifiers[3] = {-distance, 0, distance};
-            vector<point> points(3, neighbor);
-            for (int i = 0; i < 3; i++) {
-                points[i][dimension] = points[i][dimension] + modifiers[i];
-                if (points[i][dimension] <= bound && points[i][dimension] >= -bound)
-                    neighbors.push_back(points[i]);
-            }
-        }
-    }
+//     for (int dimension = 0; dimension < pointsDimensions; dimension++) {
+//         vector<point> temporaryNeighbors(neighbors);
+//         for (point neighbor : temporaryNeighbors) {
+//             float modifiers[3] = {-distance, 0, distance};
+//             vector<point> points(3, neighbor);
+//             for (int i = 0; i < 3; i++) {
+//                 points[i][dimension] = points[i][dimension] + modifiers[i];
+//                 if (points[i][dimension] <= bound && points[i][dimension] >= -bound)
+//                     neighbors.push_back(points[i]);
+//             }
+//         }
+//     }
 
-    erase(neighbors, pointZero);
-    return withoutDuplicates(neighbors);
-}
+//     erase(neighbors, pointZero);
+//     return withoutDuplicates(neighbors);
+// }
 
-void removeTabuPoints(vector<point>& neighborhood, const vector<result>& tabuList) {
-    for (result tabuPoint : tabuList) {
-        auto it = remove(neighborhood.begin(), neighborhood.end(), tabuPoint.x);
-        neighborhood.erase(it, neighborhood.end());
-    }
-}
+// void removeTabuPoints(vector<point>& neighborhood, const vector<result>& tabuList) {
+//     for (result tabuPoint : tabuList) {
+//         auto it = remove(neighborhood.begin(), neighborhood.end(), tabuPoint.x);
+//         neighborhood.erase(it, neighborhood.end());
+//     }
+// }
 
-vector<point> withoutDuplicates(const vector<point>& vec) {
-    vector<point> copy(vec);
-    sort(copy.begin(), copy.end());
-    auto it = unique(copy.begin(), copy.end());
-    copy.erase(it, copy.end());
-    return copy;
-}
+// vector<point> withoutDuplicates(const vector<point>& vec) {
+//     vector<point> copy(vec);
+//     sort(copy.begin(), copy.end());
+//     auto it = unique(copy.begin(), copy.end());
+//     copy.erase(it, copy.end());
+//     return copy;
+// }
 
-vector<result> calculateTargetFunctionForNeighborhood(const function<float(vector<float>)>& targetFunction, const vector<point>& neighborhood) {
-    vector<result> resultsForNeighborhood;
-    for (point neighbor : neighborhood) {
-        float y = targetFunction(neighbor);
-        result resultForNeighbor(y, neighbor); 
-        resultsForNeighborhood.push_back(resultForNeighbor);
-    }
-    return resultsForNeighborhood;
-}
+// vector<result> calculateTargetFunctionForNeighborhood(const function<float(vector<float>)>& targetFunction, const vector<point>& neighborhood) {
+//     vector<result> resultsForNeighborhood;
+//     for (point neighbor : neighborhood) {
+//         float y = targetFunction(neighbor);
+//         result resultForNeighbor(y, neighbor); 
+//         resultsForNeighborhood.push_back(resultForNeighbor);
+//     }
+//     return resultsForNeighborhood;
+// }
 
-void updateTabuList(vector<result>& tabuList, const vector<result>& resultsForNeighborhood) {
-    tabuList.insert(tabuList.end(), resultsForNeighborhood.begin(), resultsForNeighborhood.end());
-}
+// void updateTabuList(vector<result>& tabuList, const vector<result>& resultsForNeighborhood) {
+//     tabuList.insert(tabuList.end(), resultsForNeighborhood.begin(), resultsForNeighborhood.end());
+// }
 
 void insertInTabuList(vector<result>& tabuList, const result& resultToInsert) {
     tabuList.push_back(resultToInsert);
@@ -230,4 +235,12 @@ void updateMinimum(result& foundMinimum, const vector<result>& resultsForNeighbo
     if (*it < foundMinimum) {
         foundMinimum = *it;
     }
+}
+
+void writeToLog(ofstream& fileLog, float y_min, point x_min) {
+        fileLog <<  y_min;
+        for (float x : x_min) {
+            fileLog << "," << x;
+        }
+        fileLog << endl; 
 }
