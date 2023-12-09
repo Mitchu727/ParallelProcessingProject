@@ -11,7 +11,7 @@
 using namespace std;
 
 int const TABU_LIST_MAX_SIZE = 1000;
-int const NEIGHBORS_SIZE = 1000;
+int const NEIGHBORS_SIZE = 500;
 float const TABU_LIST_FORBIDDEN_NEIGHBORHOOD_DISTANCE = 0.5;
 float EXPLORATION_DISTANCE = 4;
 

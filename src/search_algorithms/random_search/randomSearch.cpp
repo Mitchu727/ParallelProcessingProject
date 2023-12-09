@@ -35,16 +35,17 @@ result minimizeFunctionUsingRandomSearch(function<float(vector<float>)> targetFu
                 y_min = y;
                 x_min = x;
             }
-            std::cout << "Threads: " << omp_get_num_threads() << std::endl;
             //DO ZAPISU DO PLIKU
             if (saveToLog) { 
-                fileLog <<  y_min << "," << y << endl; 
+                fileLog <<  y_min << "," << x_min[0] << "," << x_min[1] << "," << x[0] << "," << x[1] << endl; 
             }
         }
     }
 
     return result{y_min, x_min};
 }
+
+
 
 // Otymalizacja - każdy wątek liczy swoje minimum
 // result minimizeFunctionUsingRandomSearch(function<float(vector<float>)> targetFunction, int dimension, ofstream& fileLog, bool saveToLog, float lowerBound, float upperBound, int iterations)
