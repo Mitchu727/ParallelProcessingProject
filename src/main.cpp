@@ -16,7 +16,7 @@ using namespace std;
 int main(int argc, char* argv[]) 
 { 
     string optimizationType = argv[1];
-    if (optimizationType != "random" && optimizationType != "tabu") throw invalid_argument("Uknown optimization type: " + optimizationType);
+    if (optimizationType != "random" && optimizationType != "tabu") throw invalid_argument("Unknown optimization type: " + optimizationType);
 
     function<float(vector<float>)> function;
     float lowerBound;
@@ -31,7 +31,7 @@ int main(int argc, char* argv[])
         lowerBound = -30;
         upperBound = 30;
     } else {
-        throw invalid_argument("Uknown function to optimize: " + functionToOptimize);
+        throw invalid_argument("Unknown function to optimize: " + functionToOptimize);
     }
 
     int dimensions = stoi(argv[3]);

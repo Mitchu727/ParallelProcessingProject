@@ -88,7 +88,7 @@ result calculateTabuSearch(const function<float(vector<float>)>& targetFunction,
         1. Start with distance of 1 from starting point
         2. Generate neighborhood
         3. Remove tabu points from neighborhood
-        4. If neighborhood size is less than numNeighbors, increace the distance by 1 and go back to 2.
+        4. If neighborhood size is less than numNeighbors, increase the distance by 1 and go back to 2.
         5. Continue until at least numNeighbors neighbors are gathered
         6. Trim the neighborhood to numNeighbors neighbors
 */
@@ -123,16 +123,16 @@ vector<point> generateNeighborhood(const point& startingPoint, const vector<resu
 
     Algorithm:
     1. Add the starting point to an empty neighbors list
-    2. For each of leighbors list elements add to the neighbor list this point, moved in the first dimension by -distance, 0 and distance
+    2. For each of neighbors list elements add to the neighbor list this point, moved in the first dimension by -distance, 0 and distance
         (3 new points for each element in the neighbor list)
     3. 3. Repeat ad. 2 for another dimensions
-    4. Delete repetitions and starting point from neighobrs list
+    4. Delete repetitions and starting point from neighbors list
 
     Example
     Let's start with point (0, 0)
     1. neighbors_list = [(0, 0)]
     2. iterations:
-        1. Frst dimension: neighbors_list = [(0, 0), (-1, 0), (0, 0), (1, 0)]
+        1. First dimension: neighbors_list = [(0, 0), (-1, 0), (0, 0), (1, 0)]
         2. Second dimension: neighbors_list = [(0, 0), 
                                                (0, -1), (0, 0), (0, 1), 
                                                (-1, 0),
@@ -147,7 +147,7 @@ vector<point> generateNeighborhood(const point& startingPoint, const vector<resu
 
 */
 
-//TODO nie jestem pewien czy do jest dobry pomysł
+//TODO nie jestem pewien czy to jest dobry pomysł
 vector<point> generateNeighborhoodWithConstantDistance(const point& pointZero, float distance, float bound) {
     int pointsDimensions = pointZero.size();
 
