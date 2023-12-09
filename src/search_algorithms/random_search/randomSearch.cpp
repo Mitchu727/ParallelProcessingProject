@@ -12,20 +12,30 @@ void checkForPositive(int param, string name) {
         throw invalid_argument("Nonpositive argument " + name + " in calculateRandomSearch: " + to_string(param));
 }
 
-result calculateRandomSearch(function<float(vector<float>)> targetFunction, int dimension, int iterations, float lowerBound, float upperBound)
+result minimizeFunctionUsingRandomSearch(function<float(vector<float>)> targetFunction, int dimension, ofstream& fileLog, bool saveToLog, float lowerBound, float upperBound, int iterations)
 {
     float y, y_min = numeric_limits<float>::infinity();
     vector<float> x, x_min;
+    int i;
 
     checkForPositive(dimension, "dimension");
     checkForPositive(iterations, "iterations");
 
-    for (int i = 0; i < iterations; i++) {
+    // # pragma omp parallel shared(iterations, dimension, lowerBound, upperBound, x_min, y_min, fileLog, saveToLog) private(i, x ,y) //DO ZAPISU DO PLIKU
+    #pragma omp parallel for shared(iterations, dimension, lowerBound, upperBound, x_min, y_min) private(i, x ,y)
+    for (i = 0; i < iterations; i++) {
         x = generateRandomVectorFromUniformDistribution(dimension, lowerBound, upperBound);
         y = targetFunction(x);
-        if (y < y_min) {
-            y_min = y;
-            x_min = x;
+        #pragma omp critical 
+        {
+            if (y < y_min) {
+                y_min = y;
+                x_min = x;
+            }
+            //DO ZAPISU DO PLIKU
+            // if (saveToLog) { 
+            // fileLog <<  y_min << "," << y << endl; 
+            // }
         }
     }
 

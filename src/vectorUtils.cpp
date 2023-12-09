@@ -1,6 +1,8 @@
 #include <vector>
 #include <bits/stdc++.h> 
 #include "vectorUtils.h"
+#include "algorithm"
+#include "point.h"
 
 using namespace std;
 
@@ -19,8 +21,22 @@ vector<float> generateRandomVectorFromUniformDistribution(int size, float minVal
     return generatedVector;
 }
 
+vector<float> generateRandomVectorInNeighborhoodFromUniformDistribution(point basePoint, float distance, float minValue, float maxValue) {
+    vector<float> generatedVector(basePoint.size());
+    for (size_t i = 0; i < generatedVector.size(); i++) {
+        generatedVector[i] = generateRandomNumberFromUniformDistribution(max(minValue, basePoint[i]-distance), min(maxValue, basePoint[i]+distance));
+    }
+    return generatedVector;
+}
+
 float calculateSquareSumOfValuesInVector(vector<float> x) {
-  return std::inner_product( x.begin(), x.end(), x.begin(), 0 );
+  int i;
+  float sum = 0;
+  // #pragma omp parallel for shared(x) private(i) reduction(+:sum) spowalnia program nawet z omp nested ustawionym na false
+  for(i=0; i<x.size(); i++) {
+    sum += x[i]*x[i];
+  }
+  return sum;
 }
 
 void printVector (const vector<float>& vec) {
