@@ -4,8 +4,10 @@
 #include "firstFunction.h"
 #include "vectorUtils.h"
 #include "result.h"
+#include <omp.h>
 
 using namespace std;
+
 
 void checkForPositive(int param, string name) { 
     if (param <= 0) 
@@ -16,6 +18,7 @@ result minimizeFunctionUsingRandomSearch(function<float(vector<float>)> targetFu
 {
     float y, y_min = numeric_limits<float>::infinity();
     vector<float> x, x_min;
+    
     int i;
 
     checkForPositive(dimension, "dimension");
@@ -32,6 +35,7 @@ result minimizeFunctionUsingRandomSearch(function<float(vector<float>)> targetFu
                 y_min = y;
                 x_min = x;
             }
+            std::cout << "Threads: " << omp_get_num_threads() << std::endl;
             //DO ZAPISU DO PLIKU
             if (saveToLog) { 
                 fileLog <<  y_min << "," << y << endl; 
