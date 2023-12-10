@@ -47,7 +47,7 @@ result minimizeFunctionUsingTabuSearch(const function<float(vector<float>)>& tar
         }
         insertInTabuList(tabuList, foundMinimum);
         foundMinimum.print();
-        if (i - last_updated >= STUCK_ON_MINIMUM_COUNT) {
+        if (i - last_updated >= STUCK_ON_MINIMUM_LIMIT) {
             cout << "Finished by stuck on minimum point." << endl;
             break;
         }
