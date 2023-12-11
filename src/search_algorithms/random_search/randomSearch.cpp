@@ -16,8 +16,8 @@ result minimizeFunctionUsingRandomSearch(function<float(vector<float>)> targetFu
 {
     float y, y_min = numeric_limits<float>::infinity();
     vector<float> x, x_min;
+    
     int i;
-
     checkForPositive(dimension, "dimension");
     checkForPositive(iterations, "iterations");
 
@@ -33,9 +33,9 @@ result minimizeFunctionUsingRandomSearch(function<float(vector<float>)> targetFu
                 x_min = x;
             }
             //DO ZAPISU DO PLIKU
-            // if (saveToLog) { 
-            // fileLog <<  y_min << "," << y << endl; 
-            // }
+            if (saveToLog) { 
+                fileLog <<  y_min << "," << x_min[0] << "," << x_min[1] << "," << x[0] << "," << x[1] << endl; 
+            }
         }
     }
 

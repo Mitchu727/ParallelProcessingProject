@@ -16,7 +16,7 @@ int const STUCK_ON_MINIMUM_LIMIT = 20;
 float const TABU_LIST_FORBIDDEN_NEIGHBORHOOD_DISTANCE = 0.1;
 float EXPLORATION_DISTANCE = 7;
 
-result minimizeFunctionUsingTabuSearch(const function<float(vector<float>)>& targetFunction, int dimension, float lowerBound, float upperBound, int iterations)
+result minimizeFunctionUsingTabuSearch(const function<float(vector<float>)>& targetFunction, int dimension, ofstream& fileLog, bool saveToLog, float lowerBound, float upperBound, int iterations)
 {
     point startingPoint = generateRandomVectorFromUniformDistribution(dimension, lowerBound, upperBound);
     result foundMinimum = result(targetFunction(startingPoint), startingPoint);
@@ -29,15 +29,21 @@ result minimizeFunctionUsingTabuSearch(const function<float(vector<float>)>& tar
         point x, x_min;
 
         float y, y_min = numeric_limits<float>::infinity();
-        #pragma omp parallel for shared(NEIGHBORS_SIZE, dimension, lowerBound, upperBound, x_min, y_min, foundMinimum) private(i, x ,y)
+        vector<point> pointsCheckedInIteration;
+        #pragma omp parallel for shared(NEIGHBORS_SIZE, dimension, lowerBound, upperBound, x_min, y_min, foundMinimum, pointsCheckedInIteration) private(i, x ,y)
         for (int j=0; j<NEIGHBORS_SIZE; j++) {
             x = generateRandomVectorInNeighborhoodFromUniformDistribution(foundMinimum.x, EXPLORATION_DISTANCE, lowerBound, upperBound);
             y = targetFunction(x);
             if (!checkIfTabuListContains(tabuList, x)) {
                 #pragma omp critical
-                if (y<y_min) {
-                    y_min = y;
-                    x_min = x;
+                {
+                    if (y<y_min) {
+                        y_min = y;
+                        x_min = x;
+                    }
+                    if (saveToLog) {
+                        pointsCheckedInIteration.push_back(x);
+                    }
                 }
             }
         }
@@ -47,9 +53,15 @@ result minimizeFunctionUsingTabuSearch(const function<float(vector<float>)>& tar
         }
         insertInTabuList(tabuList, foundMinimum);
         foundMinimum.print();
+
         if (i - last_updated >= STUCK_ON_MINIMUM_LIMIT) {
             cout << "Finished by stuck on minimum point." << endl;
             break;
+        }
+
+        if (saveToLog) {
+            writeToLog(fileLog, y_min, x_min, pointsCheckedInIteration);
+            pointsCheckedInIteration.clear();
         }
     }
     return foundMinimum;
@@ -77,4 +89,20 @@ bool checkDistanceBetweenPointsIsSmallerThan(point firstPoint, point secondPoint
         sum+= pow(firstPoint[i]-secondPoint[i], 2);
     }
     return sqrt(sum) < distance;
+}
+
+void writeToLog(ofstream& fileLog, float y_min, point x_min, const vector<point>& checkedPoints) {
+    // format: y,x1,x2,p1;p2;p3;p4...
+    fileLog <<  y_min;
+    for (float x : x_min) {
+        fileLog << "," << x;
+    }
+    fileLog << ",";
+    for (int i = 0; i < checkedPoints.size(); i++) {
+        if (i != 0)
+            fileLog << ";";
+        fileLog << checkedPoints[i][0] << ";" << checkedPoints[i][1];
+
+    }
+    fileLog << endl;
 }
