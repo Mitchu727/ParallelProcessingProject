@@ -21,5 +21,4 @@ void updateMinimum(result& tmpMinimum, const vector<result>& resultsForNeighborh
 void insertInTabuList(vector<result>& tabuList, const result& resultToInsert);
 bool checkIfTabuListContains(vector<result>& tabuList, point pointToCheck);
 bool checkDistanceBetweenPointsIsSmallerThan(point firstPoint, point secondPoint, float distance);
-
 void writeToLog(ofstream& fileLog, float y_min, point x_min, const vector<point>& checkedPoints);

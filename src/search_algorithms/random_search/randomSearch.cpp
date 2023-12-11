@@ -4,7 +4,6 @@
 #include "firstFunction.h"
 #include "vectorUtils.h"
 #include "result.h"
-#include <omp.h>
 
 using namespace std;
 
