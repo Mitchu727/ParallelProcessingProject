@@ -7,7 +7,6 @@
 
 using namespace std;
 
-
 void checkForPositive(int param, string name) { 
     if (param <= 0) 
         throw invalid_argument("Nonpositive argument " + name + " in calculateRandomSearch: " + to_string(param));
@@ -19,7 +18,6 @@ result minimizeFunctionUsingRandomSearch(function<float(vector<float>)> targetFu
     vector<float> x, x_min;
     
     int i;
-
     checkForPositive(dimension, "dimension");
     checkForPositive(iterations, "iterations");
 
