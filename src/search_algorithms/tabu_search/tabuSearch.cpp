@@ -27,6 +27,7 @@ result minimizeFunctionUsingTabuSearch(const function<float(vector<float>)>& tar
         vector<point> neighborhood;
         cout << "it: " << i << "\t";
         point x, x_min;
+
         float y, y_min = numeric_limits<float>::infinity();
         vector<point> pointsCheckedInIteration;
         #pragma omp parallel for shared(NEIGHBORS_SIZE, dimension, lowerBound, upperBound, x_min, y_min, foundMinimum, pointsCheckedInIteration) private(i, x ,y)
@@ -62,9 +63,6 @@ result minimizeFunctionUsingTabuSearch(const function<float(vector<float>)>& tar
             writeToLog(fileLog, y_min, x_min, pointsCheckedInIteration);
             pointsCheckedInIteration.clear();
         }
-
-        // vector<result> resultsForCurrentNeighborhood = calculateTargetFunctionForNeighborhood(targetFunction, neighborhood);
-        // updateTabuList(tabuList, resultsForCurrentNeighborhood);
     }
     return foundMinimum;
 }
