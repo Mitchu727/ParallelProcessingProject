@@ -16,7 +16,7 @@ x1 = data['x1'].tolist()
 x2 = data['x2'].tolist()
 string_list = data['checked_points'].tolist()
 
-# to na dole pobiera dowolna ilosc punktow z konca wiersza oddzielonych ";"
+# extract points from the end of each row, points are separated by ";"
 checked_points = []
 for string in string_list:
     num_strings = string.split(";")
