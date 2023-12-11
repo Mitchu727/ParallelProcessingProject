@@ -45,8 +45,6 @@ result minimizeFunctionUsingRandomSearch(function<float(vector<float>)> targetFu
     return result{y_min, x_min};
 }
 
-
-
 // Otymalizacja - każdy wątek liczy swoje minimum
 // result minimizeFunctionUsingRandomSearch(function<float(vector<float>)> targetFunction, int dimension, ofstream& fileLog, bool saveToLog, float lowerBound, float upperBound, int iterations)
 // {

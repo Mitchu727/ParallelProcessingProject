@@ -26,7 +26,7 @@ for string in string_list:
         points.append([nums[2*i], nums[2*i + 1]])
     checked_points.append(points)
 
-#wykres
+# plot
 fig, ax = plt.subplots()
 sc = ax.scatter(x1[0], x2[0], color='blue', s=3)
 
