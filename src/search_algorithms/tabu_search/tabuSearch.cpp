@@ -10,16 +10,18 @@
 
 using namespace std;
 
-int const TABU_LIST_MAX_SIZE = 1000;
-int const NEIGHBORS_SIZE = 500;
-float const TABU_LIST_FORBIDDEN_NEIGHBORHOOD_DISTANCE = 0.5;
-float EXPLORATION_DISTANCE = 4;
+int const TABU_LIST_MAX_SIZE = 100;
+int const NEIGHBORS_SIZE = 10000;
+int const STUCK_ON_MINIMUM_LIMIT = 20;
+float const TABU_LIST_FORBIDDEN_NEIGHBORHOOD_DISTANCE = 0.1;
+float EXPLORATION_DISTANCE = 7;
 
 result minimizeFunctionUsingTabuSearch(const function<float(vector<float>)>& targetFunction, int dimension, ofstream& fileLog, bool saveToLog, float lowerBound, float upperBound, int iterations)
 {
     point startingPoint = generateRandomVectorFromUniformDistribution(dimension, lowerBound, upperBound);
     result foundMinimum = result(targetFunction(startingPoint), startingPoint);
     vector<result> tabuList;
+    int last_updated = 0;
 
     for (int i = 1; i <= iterations; i++) {
         vector<point> neighborhood;
@@ -46,9 +48,15 @@ result minimizeFunctionUsingTabuSearch(const function<float(vector<float>)>& tar
         }
         if (y_min < foundMinimum.y) {
             foundMinimum = result(y_min, x_min);
+            last_updated = i;
         }
         insertInTabuList(tabuList, foundMinimum);
         foundMinimum.print();
+
+        if (i - last_updated >= STUCK_ON_MINIMUM_LIMIT) {
+            cout << "Finished by stuck on minimum point." << endl;
+            break;
+        }
 
         if (saveToLog) {
             writeToLog(fileLog, y_min, x_min, pointsCheckedInIteration);
@@ -83,14 +91,6 @@ bool checkDistanceBetweenPointsIsSmallerThan(point firstPoint, point secondPoint
         sum+= pow(firstPoint[i]-secondPoint[i], 2);
     }
     return sqrt(sum) < distance;
-}
-
-
-void updateMinimum(result& foundMinimum, const vector<result>& resultsForNeighborhood) {
-    auto it = min_element(resultsForNeighborhood.begin(), resultsForNeighborhood.end());
-    if (*it < foundMinimum) {
-        foundMinimum = *it;
-    }
 }
 
 void writeToLog(ofstream& fileLog, float y_min, point x_min, const vector<point>& checkedPoints) {
