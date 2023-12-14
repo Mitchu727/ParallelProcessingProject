@@ -21,6 +21,9 @@ vector<float> generateRandomVectorFromUniformDistribution(int size, float minVal
     return generatedVector;
 }
 
+/*
+  Random vectors, but not farther than distance in each cartesian dimension from the basePoint.
+*/
 vector<float> generateRandomVectorInNeighborhoodFromUniformDistribution(point basePoint, float distance, float minValue, float maxValue) {
     vector<float> generatedVector(basePoint.size());
     for (size_t i = 0; i < generatedVector.size(); i++) {

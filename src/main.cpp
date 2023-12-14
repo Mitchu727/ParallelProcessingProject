@@ -13,6 +13,14 @@
 
 using namespace std;
 
+/*
+    Should be called with arguments:
+        * argv[1] - "random" or "tabu" - algorithm to choose from
+        * argv[2] - 1 or 2 - function to optimize
+        * argv[3] - n >= 0, integer. Number of dimensions of problem
+        * argv[4] - n >= 0, integer. Maximum number of iterations of chosen algorithm.
+        * argv[5] - if "T" - save to file. Works only if number of dimensions is 2. If any other value - has no effect.
+*/
 int main(int argc, char* argv[]) 
 { 
     string optimizationType = argv[1];

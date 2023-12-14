@@ -5,6 +5,7 @@ echo "Running experiments for open MP"
 touch $fileName
 cat /dev/null > $fileName
 
+# script used to automate experiments
 
 for threadsNumber in 1 2 4 8 16 32 64 128 256 512 1024 2048 4096 8192
     do
