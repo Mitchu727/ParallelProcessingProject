@@ -21,7 +21,12 @@ result minimizeFunctionUsingRandomSearch(function<float(vector<float>)> targetFu
     checkForPositive(dimension, "dimension");
     checkForPositive(iterations, "iterations");
 
-    // # pragma omp parallel shared(iterations, dimension, lowerBound, upperBound, x_min, y_min, fileLog, saveToLog) private(i, x ,y) //DO ZAPISU DO PLIKU
+    /*
+        In each iteration:
+            1. Generate random point (vector)
+            2. Calculate target function.
+            3. In a critical section - check if it is a new maximum. If so, save it.
+    */
     #pragma omp parallel for shared(iterations, dimension, lowerBound, upperBound, x_min, y_min) private(i, x ,y)
     for (i = 0; i < iterations; i++) {
         x = generateRandomVectorFromUniformDistribution(dimension, lowerBound, upperBound);
@@ -32,8 +37,10 @@ result minimizeFunctionUsingRandomSearch(function<float(vector<float>)> targetFu
                 y_min = y;
                 x_min = x;
             }
-            //DO ZAPISU DO PLIKU
-            if (saveToLog) { 
+            /*
+                Save to file if desired. Works only for dimension == 2, because such plots weren only needed
+            */
+            if (saveToLog && dimension == 2) { 
                 fileLog <<  y_min << "," << x_min[0] << "," << x_min[1] << "," << x[0] << "," << x[1] << endl; 
             }
         }
